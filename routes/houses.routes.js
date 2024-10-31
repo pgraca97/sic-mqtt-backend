@@ -9,7 +9,7 @@ const checkAuth = require("../middleware/check-auth.js");
 // import house controller middleware
 const houseController = require("../controllers/house.controller.js");
 
-router.route("/").post(checkAuth, houseController.register);
+router.route("/").post(checkAuth, houseController.register); // PRIVATE
 
 // router.route("/").get(checkAuth, houseController.findAll);
 

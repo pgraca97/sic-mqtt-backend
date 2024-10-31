@@ -147,3 +147,54 @@ exports.login = async (req, res) => {
     });
   }
 };
+
+/**
+ * Retrieves all houses for the authenticated user.
+ *
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ */
+exports.findAllHouses = async (req, res) => {
+  try {
+    const user_id = req.params.user_id;
+    const noParam = user_id == ":user_id";
+
+    const authenticatedUser = req.userData.user_id;
+
+    if (authenticatedUser != user_id) {
+      return res.status(400).json({
+        success: false,
+        msg: "User ID does not match the authenticated user.",
+      });
+    }
+
+    if (noParam) {
+      return res.status(400).json({
+        success: false,
+        msg: "Please provide a user id",
+      });
+    }
+
+    // Fetch all houses associated with the authenticated user
+    const houses = await db.house.findAll({ where: { user_id } });
+
+    if (houses.length == 0) {
+      return res.status(404).json({
+        success: false,
+        msg: "No houses found for this user.",
+      });
+    }
+
+    // Return the houses in the response
+    res.status(200).json({
+      success: true,
+      data: houses,
+    });
+  } catch (err) {
+    // If an error occurs, return a 500 response with an error message
+    res.status(500).json({
+      success: false,
+      msg: err.message || "Some error occurred while retrieving houses.",
+    });
+  }
+};
