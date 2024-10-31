@@ -29,6 +29,9 @@ app.get("/", function (req, res) {
 // routing middleware for resource USERS
 app.use("/users", require("./routes/users.routes.js"));
 
+// routing middleware for resource HOUSES
+app.use("/houses", require("./routes/houses.routes.js"));
+
 // handle invalid routes
 app.all("*", function (req, res) {
   res.status(404).json({ message: "WHAT???" });
