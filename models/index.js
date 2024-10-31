@@ -1,4 +1,3 @@
-const { on } = require("nodemon");
 const dbConfig = require("../config/db.config.js");
 const { Sequelize, DataTypes } = require("sequelize");
 
@@ -28,9 +27,8 @@ db.sequelize = sequelize;
 //export User model
 db.user = require("./user.model.js")(sequelize, DataTypes);
 
-
 // // optionally: SYNC
-(async () => {
+/* (async () => {
   try {
     await sequelize.sync({ force: true }); // creates tables, dropping them first if they already existed
     //await sequelize.sync({ alter: true }); // checks the tables in the database (which columns they have, what are their data types, etc.), and then performs the necessary changes to make then match the models
@@ -39,6 +37,6 @@ db.user = require("./user.model.js")(sequelize, DataTypes);
   } catch (error) {
     console.log(error);
   }
-})();
+})(); */
 
 module.exports = db;

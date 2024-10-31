@@ -6,10 +6,10 @@ const router = express.Router();
 // import user controller middleware
 const userController = require("../controllers/user.controller.js");
 
-router.route("/").post(userController.create); // PUBLIC
+router.route("/").post(userController.register); // PUBLIC
 
 router.all("*", (req, res) => {
-  res.status(404).json({ message: "CodeMaster: what???" }); //send a predefined error message
+  res.status(404).json({ message: "StockWise: what???" }); //send a predefined error message
 });
 
 //export this router
