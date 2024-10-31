@@ -1,5 +1,10 @@
+require("dotenv").config();
+
 // Importing the bcrypt library
 const bcrypt = require("bcrypt");
+
+// Importing the jsonwebtoken library
+const jwt = require("jsonwebtoken");
 
 // Importing Sequelize errors
 const { ValidationError, UniqueConstraintError } = require("sequelize");
@@ -77,5 +82,68 @@ exports.register = async (req, res) => {
         success: false,
         msg: err.message || "Some error occurred while creating the user.",
       });
+  }
+};
+
+/**
+ * Logs in a user.
+ *
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ */
+exports.login = async (req, res) => {
+  try {
+    // Extract the email and password from the request body
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        msg: "Please provide an email and a password.",
+      });
+    }
+
+    // Find the user with the provided email
+    const user = await db.user.findOne({ where: { email } });
+
+    // If the user is not found, return a 404 response
+    if (!user)
+      return res.status(404).json({
+        success: false,
+        msg: "User not found.",
+      });
+
+    // Compare the password with the hashed password
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (isMatch) {
+      const token = jwt.sign(
+        {
+          email: user.email,
+          user_id: user.user_id,
+        },
+        process.env.JWT_SECRET_KEY,
+        {
+          expiresIn: process.env.JWT_EXPIRATION_TIME,
+        }
+      );
+      res.status(200).json({
+        success: true,
+        msg: "Auth successful",
+        accessToken: token,
+      });
+    } else {
+      // If the password is incorrect, return a 400 response
+      res.status(400).json({
+        success: false,
+        msg: "Auth failed",
+      });
+    }
+  } catch (err) {
+    // If an error occurs, return a 500 response with an error message
+    res.status(500).json({
+      success: false,
+      msg: err.message || "Some error occurred while logging in.",
+    });
   }
 };

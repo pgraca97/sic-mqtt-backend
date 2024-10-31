@@ -8,6 +8,8 @@ const userController = require("../controllers/user.controller.js");
 
 router.route("/").post(userController.register); // PUBLIC
 
+router.route("/login").post(userController.login); // PUBLIC
+
 router.all("*", (req, res) => {
   res.status(404).json({ message: "StockWise: what???" }); //send a predefined error message
 });
