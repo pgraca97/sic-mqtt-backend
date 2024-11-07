@@ -11,6 +11,8 @@ const houseController = require("../controllers/house.controller.js");
 
 router.route("/").post(checkAuth, houseController.register); // PRIVATE
 
+router.route("/:house_id").patch(checkAuth, houseController.update); // PRIVATE
+
 // router.route("/").get(checkAuth, houseController.findAll);
 
 router.all("*", (req, res) => {
