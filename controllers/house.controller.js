@@ -31,6 +31,14 @@ exports.register = async (req, res) => {
       max_temperature,
     });
 
+    // Register the house and the user as the owner in the user_house table
+    await db.userHouse.create({
+      user_id: owner_id,
+      house_id: house.house_id,
+      role: "owner",
+      created_at: new Date(),
+    });
+
     // Responding with a success message
     res.status(201).json({
       success: true,
