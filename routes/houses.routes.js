@@ -13,6 +13,10 @@ router.route("/").post(checkAuth, houseController.register); // PRIVATE
 
 router.route("/:house_id").patch(checkAuth, houseController.update); // PRIVATE
 
+router
+  .route("/:house_id/invites")
+  .post(checkAuth, houseController.createInvite); // PRIVATE
+
 // router.route("/").get(checkAuth, houseController.findAll);
 
 router.all("*", (req, res) => {

@@ -1,5 +1,6 @@
 const { ValidationError, UniqueConstraintError } = require("sequelize");
 const db = require("../models"); // Adjust the path as necessary
+const { generateInvite } = require("../utils/generateInvite");
 
 exports.register = async (req, res) => {
   try {
@@ -67,6 +68,12 @@ exports.register = async (req, res) => {
   }
 };
 
+/**
+ * Update a house by their ID.
+ *
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ */
 exports.update = async (req, res) => {
   try {
     const house_id = req.params.house_id;
@@ -134,7 +141,68 @@ exports.update = async (req, res) => {
     // If an error occurs, return a 500 response with an error message
     res.status(500).json({
       success: false,
-      msg: `Error retrieving user with ID ${req.params.user_id}.`,
+      msg: `Error retrieving house with ID ${req.params.house_id}.`,
+    });
+  }
+};
+
+/**
+ * Create an invite for a house.
+ *
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ */
+exports.createInvite = async (req, res) => {
+  try {
+    const house_id = req.params.house_id;
+    const user_id = req.userData.user_id;
+    const invite_id = generateInvite();
+    const expires_at = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+
+    // Check if the user is the owner of the house
+    const userHouse = await db.userHouse.findOne({
+      where: { user_id, house_id, role: "owner" },
+    });
+
+    if (!userHouse) {
+      return res.status(403).json({
+        success: false,
+        message: "You are not authorized to create invites for this house",
+      });
+    }
+
+    // Save the invite in the database
+    await db.invite.create({
+      invite_id,
+      house_id,
+      user_id,
+      expires_at,
+    });
+
+    // Construct the invite URL
+    const invite_url = `${req.protocol}://${req.get(
+      "host"
+    )}/invite/${invite_id}`;
+    console.log("🚀 ~ exports.createInvite= ~ invite_id:", invite_id);
+
+    // Responding with a success message
+    res.status(201).json({
+      success: true,
+      message: "Invite created successfully",
+      data: invite_url,
+    });
+  } catch (err) {
+    // If a validation error occurs, return a 400 response with error messages
+    if (err instanceof ValidationError)
+      return res.status(400).json({
+        success: false,
+        msg: err.errors.map((e) => e.message),
+      });
+
+    // If an error occurs, return a 500 response with an error message
+    res.status(500).json({
+      success: false,
+      msg: `Error retrieving house with ID ${req.params.house_id}.`,
     });
   }
 };
