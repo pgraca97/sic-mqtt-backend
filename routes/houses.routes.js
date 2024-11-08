@@ -17,6 +17,10 @@ router
   .route("/:house_id/invites")
   .post(checkAuth, houseController.createInvite); // PRIVATE
 
+router
+  .route("/:house_id/invites/:invite_id/accept")
+  .post(checkAuth, houseController.acceptInvite); // PRIVATE
+
 // router.route("/").get(checkAuth, houseController.findAll);
 
 router.all("*", (req, res) => {

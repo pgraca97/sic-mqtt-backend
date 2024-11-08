@@ -183,13 +183,82 @@ exports.createInvite = async (req, res) => {
     const invite_url = `${req.protocol}://${req.get(
       "host"
     )}/invite/${invite_id}`;
-    console.log("🚀 ~ exports.createInvite= ~ invite_id:", invite_id);
 
     // Responding with a success message
     res.status(201).json({
       success: true,
       message: "Invite created successfully",
       data: invite_url,
+    });
+  } catch (err) {
+    // If a validation error occurs, return a 400 response with error messages
+    if (err instanceof ValidationError)
+      return res.status(400).json({
+        success: false,
+        msg: err.errors.map((e) => e.message),
+      });
+
+    // If an error occurs, return a 500 response with an error message
+    res.status(500).json({
+      success: false,
+      msg: `Error retrieving house with ID ${req.params.house_id}.`,
+    });
+  }
+};
+
+/**
+ * Accept an invite for a house.
+ *
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ */
+exports.acceptInvite = async (req, res) => {
+  try {
+    const invite_id = req.params.invite_id;
+    const user_id = req.userData.user_id;
+
+    // verify if the invite exists
+    const invite = await db.invite.findOne({
+      where: { invite_id },
+    });
+
+    // Verify if the invite didn't expire
+    if (invite.expires_at < new Date()) {
+      return res.status(400).json({
+        success: false,
+        message: "Invite expired",
+      });
+    }
+
+    // Verify if the user is not already in the house
+    const userHouse = await db.userHouse.findOne({
+      where: { user_id, house_id: invite.house_id },
+    });
+
+    if (userHouse) {
+      return res.status(400).json({
+        success: false,
+        message: "You are already a member of this house",
+      });
+    }
+
+    // Add the user to the house
+    await db.userHouse.create({
+      user_id,
+      house_id: invite.house_id,
+      role: "member",
+      created_at: new Date(),
+    });
+
+    // Delete the invite
+    await db.invite.destroy({
+      where: { invite_id },
+    });
+
+    // Respond with a success message
+    res.status(200).json({
+      success: true,
+      message: "Successfully joined the house",
     });
   } catch (err) {
     // If a validation error occurs, return a 400 response with error messages
