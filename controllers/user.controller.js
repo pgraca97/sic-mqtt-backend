@@ -176,7 +176,24 @@ exports.findAllHouses = async (req, res) => {
     }
 
     // Fetch all houses associated with the authenticated user
-    const houses = await db.house.findAll({ where: { user_id } });
+    const houses = await db.house.findAll({
+      where: { user_id },
+      include: [
+        {
+          model: db.user,
+          as: "owner",
+          attributes: ["user_id", "name", "email", "created_at"],
+        },
+        {
+          model: db.user,
+          through: {
+            model: db.userHouse,
+            attributes: ["role"],
+          },
+          attributes: ["user_id", "name", "email"],
+        },
+      ],
+    });
 
     if (houses.length == 0) {
       return res.status(404).json({
