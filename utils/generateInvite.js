@@ -1,5 +1,7 @@
-import crypto from "crypto";
+const crypto = require("crypto");
 
-export function generateInvite() {
+function generateInvite() {
   return crypto.randomBytes(16).toString("hex");
 }
+
+module.exports = generateInvite;
