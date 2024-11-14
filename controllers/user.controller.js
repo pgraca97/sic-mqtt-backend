@@ -131,6 +131,7 @@ exports.login = async (req, res) => {
         success: true,
         msg: "Auth successful",
         accessToken: token,
+        user_id: user.user_id,
       });
     } else {
       // If the password is incorrect, return a 400 response
