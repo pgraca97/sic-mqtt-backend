@@ -113,7 +113,7 @@ exports.update = async (req, res) => {
     // Attempt to update the house with the provided data
     let affectedRows = await db.house.update(req.body, {
       where: {
-        user_id: owner_id,
+        house_id: house_id,
       },
     });
 
