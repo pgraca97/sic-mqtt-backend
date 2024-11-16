@@ -1,4 +1,4 @@
-const { ValidationError, UniqueConstraintError } = require("sequelize");
+const { ValidationError, UniqueConstraintError, where } = require("sequelize");
 const db = require("../models"); // Adjust the path as necessary
 const generateInvite = require("../utils/generateInvite");
 
@@ -274,6 +274,44 @@ exports.acceptInvite = async (req, res) => {
     res.status(500).json({
       success: false,
       msg: `Error retrieving house with ID ${req.params.house_id}.`,
+    });
+  }
+};
+
+/**
+ * Get a house by invite ID.
+ *
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ */
+exports.getHouseByInviteId = async (req, res) => {
+  try {
+    const invite_id = req.params.invite_id;
+
+    // Get the house by invite ID
+    const house = await db.invite.findOne({
+      where: { invite_id },
+      attributes: ["house_id"], // Corrected to select only house_id
+    });
+
+    // If the house does not exist, return a 404 response
+    if (!house) {
+      return res.status(404).json({
+        success: false,
+        message: "House not found",
+      });
+    }
+
+    // Respond with the house
+    res.status(200).json({
+      success: true,
+      data: house,
+    });
+  } catch (err) {
+    // If an error occurs, return a 500 response with an error message
+    res.status(500).json({
+      success: false,
+      msg: `Error retrieving house.`,
     });
   }
 };
