@@ -33,12 +33,12 @@ exports.register = async (req, res) => {
     });
 
     // Register the house and the user as the owner in the user_house table
-    await db.userHouse.create({
+    /*  await db.userHouse.create({
       user_id: owner_id,
       house_id: house.house_id,
       role: "owner",
       created_at: new Date(),
-    });
+    }); */
 
     // Responding with a success message
     res.status(201).json({
@@ -47,6 +47,8 @@ exports.register = async (req, res) => {
       data: house,
     });
   } catch (err) {
+    console.log(err);
+
     // If a validation error occurs, return a 400 response with error messages
     if (err instanceof ValidationError)
       res.status(400).json({

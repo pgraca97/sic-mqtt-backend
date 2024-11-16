@@ -196,7 +196,24 @@ exports.findAllHouses = async (req, res) => {
       ],
     });
 
-    if (houses.length == 0) {
+    const memberHouses = await db.userHouse.findAll({
+      where: { user_id },
+    });
+
+    // Now I want to iterate over the memberHouses array and get the house_id and then get the house details from the house table
+    const memberHouseDetails = await Promise.all(
+      memberHouses.map(async (memberHouse) => {
+        const house = await db.house.findOne({
+          where: { house_id: memberHouse.house_id },
+        });
+        return house;
+      })
+    );
+
+    // Combine the houses and memberHouseDetails arrays
+    const allHouses = [...houses, ...memberHouseDetails];
+
+    if (allHouses.length == 0) {
       return res.status(404).json({
         success: false,
         msg: "No houses found for this user.",
@@ -206,7 +223,7 @@ exports.findAllHouses = async (req, res) => {
     // Return the houses in the response
     res.status(200).json({
       success: true,
-      data: houses,
+      data: allHouses,
     });
   } catch (err) {
     // If an error occurs, return a 500 response with an error message
