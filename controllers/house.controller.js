@@ -1,6 +1,6 @@
 const { ValidationError, UniqueConstraintError } = require("sequelize");
 const db = require("../models"); // Adjust the path as necessary
-const { generateInvite } = require("../utils/generateInvite");
+const generateInvite = require("../utils/generateInvite");
 
 exports.register = async (req, res) => {
   try {
