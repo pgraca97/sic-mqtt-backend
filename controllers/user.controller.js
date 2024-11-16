@@ -197,7 +197,7 @@ exports.findAllHouses = async (req, res) => {
     });
 
     const memberHouses = await db.userHouse.findAll({
-      where: { user_id },
+      where: { user_id, role: "member" },
     });
 
     // Now I want to iterate over the memberHouses array and get the house_id and then get the house details from the house table
@@ -223,7 +223,10 @@ exports.findAllHouses = async (req, res) => {
     // Return the houses in the response
     res.status(200).json({
       success: true,
-      data: allHouses,
+      data: {
+        houses,
+        memberHouses: memberHouseDetails,
+      },
     });
   } catch (err) {
     // If an error occurs, return a 500 response with an error message
