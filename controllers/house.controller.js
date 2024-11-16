@@ -69,16 +69,34 @@ exports.register = async (req, res) => {
 };
 
 
+/**
+ * Obtém detalhes de uma casa específica com suas prateleiras e produtos
+ */
 exports.findOne = async (req, res) => {
   try {
       const house_id = req.params.house_id;
-      
+      const user_id = req.userData.user_id;
+
+      // Verificar se o utilizador tem acesso à casa
+      const userHouse = await db.userHouse.findOne({
+          where: { user_id, house_id }
+      });
+
+      if (!userHouse) {
+          return res.status(403).json({
+              success: false,
+              message: "Sem permissão para aceder a esta casa"
+          });
+      }
+
+      // Buscar casa com prateleiras e produtos
       const house = await db.house.findOne({
           where: { house_id },
           include: [{
               model: db.shelf,
               include: [{
-                  model: db.product
+                  model: db.product,
+                  attributes: ['product_id', 'name', 'rfid_tag', 'container_weight', 'min_stock']
               }]
           }]
       });
@@ -94,10 +112,12 @@ exports.findOne = async (req, res) => {
           success: true,
           data: house
       });
+
   } catch (error) {
+      console.error('Erro ao buscar detalhes da casa:', error);
       res.status(500).json({
           success: false,
-          message: error.message || "Erro ao buscar casa"
+          message: error.message || "Erro ao buscar detalhes da casa"
       });
   }
 };

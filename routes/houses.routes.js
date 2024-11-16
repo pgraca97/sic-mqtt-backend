@@ -12,6 +12,7 @@ const houseController = require("../controllers/house.controller.js");
 router.route("/").post(checkAuth, houseController.register); // PRIVATE
 
 router.route("/:house_id").patch(checkAuth, houseController.update); // PRIVATE
+router.get('/:house_id', checkAuth, houseController.findOne);
 
 router
   .route("/:house_id/invites")
