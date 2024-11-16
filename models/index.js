@@ -33,6 +33,8 @@ db.house = require("./house.model.js")(sequelize, DataTypes);
 db.userHouse = require("./userHouse.model.js")(sequelize, DataTypes);
 //export Invite model
 db.invite = require("./invite.model.js")(sequelize, DataTypes);
+db.shelf = require("./shelf.model.js")(sequelize, DataTypes);
+db.product = require("./product.model.js")(sequelize, DataTypes);
 
 // 1:N, 1 user, N houses
 db.user.hasMany(db.house, {
@@ -72,6 +74,22 @@ db.user.hasMany(db.invite, {
 });
 db.invite.belongsTo(db.user, {
   foreignKey: "user_id",
+});
+
+db.house.hasMany(db.shelf, {
+  foreignKey: "house_id",
+  onDelete: "CASCADE"
+});
+db.shelf.belongsTo(db.house, {
+  foreignKey: "house_id"
+});
+
+db.shelf.hasMany(db.product, {
+  foreignKey: "shelf_id",
+  onDelete: "CASCADE"
+});
+db.product.belongsTo(db.shelf, {
+  foreignKey: "shelf_id"
 });
 
 // // optionally: SYNC

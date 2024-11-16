@@ -68,6 +68,40 @@ exports.register = async (req, res) => {
   }
 };
 
+
+exports.findOne = async (req, res) => {
+  try {
+      const house_id = req.params.house_id;
+      
+      const house = await db.house.findOne({
+          where: { house_id },
+          include: [{
+              model: db.shelf,
+              include: [{
+                  model: db.product
+              }]
+          }]
+      });
+
+      if (!house) {
+          return res.status(404).json({
+              success: false,
+              message: "Casa não encontrada"
+          });
+      }
+
+      res.json({
+          success: true,
+          data: house
+      });
+  } catch (error) {
+      res.status(500).json({
+          success: false,
+          message: error.message || "Erro ao buscar casa"
+      });
+  }
+};
+
 /**
  * Update a house by their ID.
  *

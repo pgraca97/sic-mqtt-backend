@@ -66,6 +66,15 @@ module.exports = (sequelize, DataTypes) => {
           },
         },
       },
+      buffer_zone: {
+        type: DataTypes.DECIMAL(4,2),
+        allowNull: false,
+        defaultValue: 1.0,
+        validate: {
+          min: 0.1,
+          max: 5.0
+        }
+      },
       created_at: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
