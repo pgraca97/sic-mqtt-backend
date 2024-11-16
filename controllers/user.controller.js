@@ -200,7 +200,7 @@ exports.findAllHouses = async (req, res) => {
       where: { user_id, role: "member" },
     });
 
-    // Now I want to iterate over the memberHouses array and get the house_id and then get the house details from the house table
+    // Iterate over the memberHouses array and get the house_id and then get the house details from the house table
     const memberHouseDetails = await Promise.all(
       memberHouses.map(async (memberHouse) => {
         const house = await db.house.findOne({
