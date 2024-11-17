@@ -58,6 +58,25 @@ module.exports = (sequelize, DataTypes) => {
         created_at: {
             type: DataTypes.DATE,
             defaultValue: DataTypes.NOW
+        },        current_weight: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            defaultValue: 0
+        },
+        max_capacity: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            validate: {
+                min: {
+                    args: [0],
+                    msg: "A capacidade máxima deve ser maior que 0"
+                }
+            }
+        },
+        location_status: {
+            type: DataTypes.ENUM('in_shelf', 'removed'),
+            allowNull: false,
+            defaultValue: 'in_shelf'
         }
     }, {
         tableName: 'products',

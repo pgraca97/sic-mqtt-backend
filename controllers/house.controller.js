@@ -96,7 +96,11 @@ exports.findOne = async (req, res) => {
               model: db.shelf,
               include: [{
                   model: db.product,
-                  attributes: ['product_id', 'name', 'rfid_tag', 'container_weight', 'min_stock']
+                  attributes: [
+                    'product_id', 'name', 'rfid_tag', 
+                    'container_weight', 'min_stock',
+                    'current_weight', 'max_capacity', 'location_status' 
+                ]
               }]
           }]
       });
