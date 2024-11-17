@@ -4,9 +4,12 @@ const router = express.Router();
 const productController = require("../controllers/product.controller");
 const checkAuth = require("../middleware/check-auth");
 
-router.get("/shelf/:shelf_id", checkAuth, productController.findByShelf);
-router.post("/", checkAuth, productController.create);
-router.patch("/:product_id", checkAuth, productController.updateProduct);
+// Rotas públicas
+router.get("/shelf/:shelf_id", productController.findByShelf);
 
+// Rotas protegidas
+router.use(checkAuth); // Middleware de autenticação
+router.post("/", productController.create);
+router.patch("/:product_id", productController.updateProduct);
 
 module.exports = router;

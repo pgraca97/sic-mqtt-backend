@@ -77,6 +77,12 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.ENUM('in_shelf', 'removed'),
             allowNull: false,
             defaultValue: 'in_shelf'
+        },
+        last_known_weight: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            defaultValue: 0,
+            comment: 'Última quantidade conhecida antes da remoção'
         }
     }, {
         tableName: 'products',

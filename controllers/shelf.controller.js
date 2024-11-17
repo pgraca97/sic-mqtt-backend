@@ -13,7 +13,8 @@ exports.findByHouse = async (req, res) => {
                 attributes: [
                     'product_id', 'name', 'rfid_tag', 
                     'container_weight', 'min_stock',
-                    'current_weight', 'max_capacity', 'location_status' 
+                    'current_weight', 'max_capacity', 'location_status' ,
+                    'last_known_weight'
                 ]
             }],
             order: [['created_at', 'ASC']]
